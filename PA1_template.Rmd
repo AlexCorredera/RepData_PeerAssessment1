@@ -13,7 +13,7 @@ knitr::opts_chunk$set( fig.path = "figs/fig-")
 
 ### Part 1: Loading and Preprocessing the Data
 
-Here the data is downloaded from the csv file. The date variable is converted from a factor variable to a date format variable and the .
+Here the data is downloaded from the csv file. The date variable is converted from a factor variable to a date format variable.
 
 ```{r}
 activity <- read.csv("activity.csv")
@@ -54,9 +54,10 @@ Next, let's figure out which five minute interval has the largest mean number of
 
 ```{r}
 which.max(meanSteps)
+meanSteps[104]
 ```
 
-So the 835 interval has the highest mean number of steps, with 104 average steps.
+So the 835 interval has the highest mean number of steps, with 206 average steps.
 
 ### Part 4: Imputing missing values
 
@@ -126,18 +127,22 @@ meanSteps2weekend <- with(subset(activity2, weekday == "Weekend"), tapply(steps,
 #Convert these resulting arrays into a combined data frame
 wd <- data.frame(interval = names(meanSteps2weekday), average.steps = meanSteps2weekday)
 wd$Weekday <- "Weekday"
+wd$order <- 1:288
+wd$interval <- factor(wd$interval, levels = wd$interval[order(wd$order)])
 
 we <- data.frame(interval = names(meanSteps2weekend), average.steps = meanSteps2weekend)
 we$Weekday <- "Weekend"
+we$order <- 1:288
+we$interval <- factor(we$interval, levels = we$interval[order(we$order)])
 
 df <- rbind(wd, we)
 df$Weekday <- as.factor(df$Weekday)
-df$interval <- as.integer(df$interval)
+
 
 #Plot the average steps per interval for each factor level
 
-q <- ggplot(df, aes(interval, average.steps)) + geom_line() + facet_grid(Weekday ~ .)
+q <- ggplot(df, aes(interval, average.steps, group = 1)) + geom_line() + facet_grid(Weekday ~ .)
 print(q)
 ```
 
-These graphs indicate that the average number of steps taken per interval follow a similar trend for both weekend and weekdays. However, peaks vary, with higher peaks for weekdays at higher intervals and seemingly lower peaks for weekdays at lower intervals.
+These graphs indicate that the average number of steps taken per interval follow a similar trend for both weekend and weekdays. However, peaks vary, with Weekdays showing the highest peak.

@@ -7,7 +7,7 @@ This markdown file includes the R code and output for the first Course Project. 
 
 ### Part 1: Loading and Preprocessing the Data
 
-Here the data is downloaded from the csv file. The date variable is converted from a factor variable to a date format variable and the .
+Here the data is downloaded from the csv file. The date variable is converted from a factor variable to a date format variable.
 
 
 ```r
@@ -26,7 +26,7 @@ totalSteps <- with(activity, tapply(steps, date, sum))
 hist(totalSteps, main = "Histogram of total steps per day", xlab = "Total steps per day")
 ```
 
-![plot of chunk unnamed-chunk-26](figs/fig-unnamed-chunk-26-1.png)
+![plot of chunk unnamed-chunk-3](figs/fig-unnamed-chunk-3-1.png)
 
 Next, let's calculate the mean and median number of steps per day.
 
@@ -60,7 +60,7 @@ meanSteps <- with(activity, tapply(steps, interval, mean, na.rm = TRUE))
 plot(meanSteps ~ names(meanSteps), type = "l", main = "Mean steps per interval", xlab = "Interval", ylab = "Mean steps")
 ```
 
-![plot of chunk unnamed-chunk-28](figs/fig-unnamed-chunk-28-1.png)
+![plot of chunk unnamed-chunk-5](figs/fig-unnamed-chunk-5-1.png)
 
 Next, let's figure out which five minute interval has the largest mean number of steps (averaged across all days).
 
@@ -74,7 +74,16 @@ which.max(meanSteps)
 ## 104
 ```
 
-So the 835 interval has the highest mean number of steps, with 104 average steps.
+```r
+meanSteps[104]
+```
+
+```
+##      835 
+## 206.1698
+```
+
+So the 835 interval has the highest mean number of steps, with 206 average steps.
 
 ### Part 4: Imputing missing values
 
@@ -120,7 +129,7 @@ totalSteps2 <- with(activity2, tapply(steps, date, sum))
 hist(totalSteps2, main = "Histogram of total steps per day (imputated)", xlab = "Total steps per day")
 ```
 
-![plot of chunk unnamed-chunk-32](figs/fig-unnamed-chunk-32-1.png)
+![plot of chunk unnamed-chunk-9](figs/fig-unnamed-chunk-9-1.png)
 
 ```r
 #Mean number of steps per day (imputated)
@@ -174,20 +183,24 @@ meanSteps2weekend <- with(subset(activity2, weekday == "Weekend"), tapply(steps,
 #Convert these resulting arrays into a combined data frame
 wd <- data.frame(interval = names(meanSteps2weekday), average.steps = meanSteps2weekday)
 wd$Weekday <- "Weekday"
+wd$order <- 1:288
+wd$interval <- factor(wd$interval, levels = wd$interval[order(wd$order)])
 
 we <- data.frame(interval = names(meanSteps2weekend), average.steps = meanSteps2weekend)
 we$Weekday <- "Weekend"
+we$order <- 1:288
+we$interval <- factor(we$interval, levels = we$interval[order(we$order)])
 
 df <- rbind(wd, we)
 df$Weekday <- as.factor(df$Weekday)
-df$interval <- as.integer(df$interval)
+
 
 #Plot the average steps per interval for each factor level
 
-q <- ggplot(df, aes(interval, average.steps)) + geom_line() + facet_grid(Weekday ~ .)
+q <- ggplot(df, aes(interval, average.steps, group = 1)) + geom_line() + facet_grid(Weekday ~ .)
 print(q)
 ```
 
-![plot of chunk unnamed-chunk-34](figs/fig-unnamed-chunk-34-1.png)
+![plot of chunk unnamed-chunk-11](figs/fig-unnamed-chunk-11-1.png)
 
-These graphs indicate that the average number of steps taken per interval follow a similar trend for both weekend and weekdays. However, peaks vary, with higher peaks for weekdays at higher intervals and seemingly lower peaks for weekdays at lower intervals.
+These graphs indicate that the average number of steps taken per interval follow a similar trend for both weekend and weekdays. However, peaks vary, with Weekdays showing the highest peak.
