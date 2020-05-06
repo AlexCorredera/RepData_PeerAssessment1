@@ -3,12 +3,20 @@ Reproducible Research Course Project 1
 
 This markdown file includes the R code and output for the first Course Project. The report is divided into five sections to answer the project questions.
 
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+knitr::opts_chunk$set( fig.path = "figs/fig-")
+
+```
+
 ### Part 1: Loading and Preprocessing the Data
 
 Here the data is downloaded from the csv file. The date variable is converted from a factor variable to a date format variable and the .
 
 ```{r}
-activity <- read.csv("data/activity.csv")
+activity <- read.csv("activity.csv")
 activity$date <- as.Date(activity$date)
 ```
 
